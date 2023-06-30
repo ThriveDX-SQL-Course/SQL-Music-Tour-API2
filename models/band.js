@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false
-    }
+    },
     genre: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Band',
     tableName: 'bands',
-    timeStamps: false
+    timestamps: false
   });
   return Band;
 };
