@@ -1,6 +1,6 @@
 const events = require('express').Router();
 const db = require('../models');
-const { Event } = db;
+const { Event, Stage, MeetGreet, Band, SetTime } = db;
 const { Op } = require('sequelize');
 
 //! CREATE
@@ -30,10 +30,44 @@ events.get('/', async (req, res) => {
     res.status(500).json(error)
   }
 })
-events.get('/:id', async (req, res) => {
+events.get('/:name', async (req, res) => {
   try {
     const foundEvent = await Event.findOne({
-      where: { event_id: req.params.id }
+      where: { name: req.params.name },
+      include: [
+        {
+          model: MeetGreet,
+          as: 'meet_greets',
+          attributes: ['meet_start_time', 'meet_end_time'],
+          include: {
+            model: Band,
+            as: 'band',
+            attributes: ['name']
+          }
+        },
+        {
+          model: Stage,
+          as: 'stages',
+          attributes: { exclude: ['stage_id'] }
+        },
+        {
+          model: SetTime,
+          as: 'set_times',
+          attributes: ['start_time', 'end_time'],
+          include: [
+            {
+              model: Band,
+              as: 'band',
+              attributes: ['name']
+            },
+            {
+              model: Stage,
+              as: 'stage',
+              attributes: ['stage_name']
+            }
+          ]
+        }
+      ]
     })
     res.status(200).json(foundEvent)
   } catch (error) {
